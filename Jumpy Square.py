@@ -16,6 +16,7 @@ class Jumper(pygame.sprite.Sprite):
         self.image.fill(pink)
         self.rect = self.image.get_rect()
         self.rect.x = 120
+        self.rect.y = 290
         self.jump_velocity = jump_velocity
         self.g = g
         self.velocity = 0
@@ -84,12 +85,29 @@ def Game(arcade):
     b_scroll = 0
 
     hit = False
+    start = False
     score = 0
 
-    # press space to start
-    # fix clamp_ip and bottom of window detection
-
     while True:
+        if not start:
+            start_text = font1.render('Press Space To Start', False, purple)
+            screen.blit(background, (0,0))
+            screen.blit(player.image, (120,290))
+            screen.blit(start_text, (screen_width // 2 - start_text.get_rect()[2] // 2, screen_height // 1.5 - start_text.get_rect()[3] // 2))
+            while not start:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == K_ESCAPE:
+                            arcade.returnToArcade()
+                        if event.key == K_SPACE:
+                            start = True
+                            player.jump()
+                
+                pygame.display.flip()
+                clock.tick(60)
         if hit:
             score_str = 'Your score is: ' + str(score)
             score_text = font1.render(score_str, False, purple)
@@ -104,9 +122,8 @@ def Game(arcade):
                         sys.exit()
                     elif event.type == pygame.KEYDOWN:
                         if event.key == K_ESCAPE:
-                            pygame.quit()
-                            sys.exit()
-                        if event.key == K_r:
+                            arcade.returnToArcade()
+                        else:
                             Game(arcade)
                 
                 pygame.display.flip()
@@ -118,8 +135,7 @@ def Game(arcade):
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
+                    arcade.returnToArcade()
                 player.jump()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 player.jump()
@@ -131,18 +147,16 @@ def Game(arcade):
 
         sprites.update()
         obstacles.update()
-        for i in obstacles:
-            if i.dokill == True: obstacles.remove(i)
-            print(i.top_rect, i.bottom_rect)
-            if player.rect.colliderect(i.top_rect) or player.rect.colliderect(i.bottom_rect):
-                hit = True
-                print('hit')
         player.rect.clamp_ip(screen_rect)
+        for i in obstacles:
+            if i.dokill == True:
+                obstacles.remove(i)
+                score += 1
+            if player.rect.colliderect(i.top_rect) or player.rect.colliderect(i.bottom_rect): hit = True
         screen.blit(background, (b_scroll, 0))
         screen.blit(background2, (b_scroll + 1600, 0))
         b_scroll -= 4
         if b_scroll <= 1600 * -1: b_scroll = 0
-
         score_text = font1.render(str(score), False, purple)
         screen.blit(score_text, (5, 5))        
         obstacles.draw(screen)

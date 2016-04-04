@@ -32,7 +32,8 @@ class arcade:
             UI_font2.render('2: Block Breaker', False, white),
             UI_font2.render('3: Snow Whirled', False, white),
             UI_font2.render('4: Pong', False, white),
-            UI_font2.render('5: Colourful Balls', False, white)
+            UI_font2.render('5: Colourful Balls', False, white),
+            UI_font2.render('6: Jumpy Square', False, white)
                       ]
         selections_rects = [x.get_rect() for x in selections]
         game = 'Arcade'
@@ -52,6 +53,7 @@ class arcade:
             if pressed[K_3] or pressed[K_KP3] or (mouse_click and selections_rects[2].collidepoint(mouse_pos)): game = 'Snow Whirled'; import_module('Snow Whirled').SnowWhirled(arcade)
             if pressed[K_4] or pressed[K_KP4] or (mouse_click and selections_rects[3].collidepoint(mouse_pos)): game = 'Pong'; import_module('Pong').Game(arcade)
             if pressed[K_5] or pressed[K_KP5] or (mouse_click and selections_rects[4].collidepoint(mouse_pos)): game = 'Colourful Balls'; import_module('Colourful Balls').game(arcade)
+            if pressed[K_6] or pressed[K_KP6] or (mouse_click and selections_rects[5].collidepoint(mouse_pos)): game = 'Jumpy Square'; import_module('Jumpy Square').Game(arcade)
             if pressed[K_ESCAPE]:
                 pygame.quit()
                 sys.exit()
