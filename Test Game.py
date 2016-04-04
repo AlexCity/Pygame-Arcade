@@ -6,6 +6,8 @@ from colours import *
 def Game(arcade):
 
     arcade.setCaption(__file__)
+
+    font1 = pygame.font.SysFont('Arial',24, True)
     
     ball_x, ball_y = 290, 290
     ball = arcade.makeSurface(20,20,1)
@@ -16,7 +18,7 @@ def Game(arcade):
     player.fill(navy,(0,0,100,25))
 
     background = pygame.Surface((600,600))
-    background.fill(green,(0,0,600,600))
+    background.fill(black,(0,0,600,600))
     arcade.initBackground(background)
 
     last = pygame.time.get_ticks()
@@ -26,6 +28,7 @@ def Game(arcade):
     dy = 3
     dx = 2
 
+    score = 0
     
     while alive:
         arcade.getEvents()
@@ -41,12 +44,12 @@ def Game(arcade):
                 if player_x < 500:
                     player_x += 5
             if pressed[K_ESCAPE]:
-                pygame.quit()
-                sys.exit()
+                arcade.returnToArcade()
                 
             if arcade.isColliding((player, player_x, player_y), (ball, ball_x, ball_y)):
                 dy *= -1
                 dx *= -1
+                score += 1
     
             if ball_y <= 0:
                 dy *= -1
@@ -64,11 +67,15 @@ def Game(arcade):
             ball_x -= dx
 
             if ball_y >= 550:
-                pygame.quit()
-                sys.exit()
+                arcade.returnToArcade()
+
+        score_text = font1.render(str(score),True,maroon)
+            
         arcade.drawBackground(background)
-        arcade.draw((player, player_x, player_y),
-                    (ball, ball_x, ball_y))
+        arcade.draw((player, player_x, player_y))
+        arcade.draw((ball, ball_x, ball_y))
+        arcade.draw((score_text, 20, 20))
+        arcade.update()
 
 if __name__ == '__main__':
     pygame.init()

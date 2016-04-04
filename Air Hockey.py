@@ -104,14 +104,17 @@ def air_hockey(arcade):
         puck.move()# Calls the puck to move itself
 
         arcade.getEvents() #Need this to close game properly, put in main loop.
-        
+
+        if arcade.getKey()[K_ESCAPE]: arcade.returnToArcade()
+                
         arcade.drawBackground(rink)#Has the engine draw the background
 
         #Has the engine draw the moving peices
         arcade.draw ((paddle.surface,paddle.coor[0],paddle.coor[1]),
                      (puck.surface,puck.coor[0],puck.coor[1]))
+        arcade.update()
 
-#Direction to the engine to where the game was started from
+#Runs game if executed from file instead of arcade
 if __name__ == '__main__':
     pygame.init()
     pygame.mixer.init(22050,-16,2,1024)
