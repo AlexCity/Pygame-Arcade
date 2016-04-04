@@ -16,27 +16,45 @@ class arcade:
         flags = HWSURFACE | DOUBLEBUF #| NOFRAME
         screen_x, screen_y = 600, 600
         self.screen = pygame.display.set_mode((screen_x,screen_y),flags)
-        pygame.display.set_icon(pygame.image.load(os.getcwd() + '\\resources\window_icon.png').convert_alpha())
+        pygame.display.set_icon(pygame.image.load(os.getcwd() + '\\resources\\window_icon.png').convert_alpha())
 
     def UI(arcade):
+        arcade.__init__()
         arcade.setCaption(__file__)
-        arcade.setWindow(600,600)
-        bg = arcade.getImage('\\','window_icon.png', 1)
+        arcade.setWindow(1125,750)
+        bg = arcade.getImage('\\','UI_bg.png')
         arcade.initBackground(bg)
-        Arial32 = pygame.font.SysFont('Arial',32)
-        text1 = Arial32.render('Welcome to the Pygame Arcade!',False, white)
-
+        UI_font1 = pygame.font.Font(os.getcwd() + '\\resources\\UI_font1.ttf', 48)
+        UI_font2 = pygame.font.Font(os.getcwd() + '\\resources\\UI_font1.ttf', 16)
+        text1 = UI_font1.render('Welcome to the Pygame Aracade!', False, white)
+        selections = [
+            UI_font2.render('1: Air Hockey', False, white),
+            UI_font2.render('2: Block Breaker', False, white),
+            UI_font2.render('3: Snow Whirled', False, white),
+            UI_font2.render('4: Pong', False, white),
+            UI_font2.render('5: Colourful Balls', False, white)
+                      ]
+        selections_rects = [x.get_rect() for x in selections]
+        game = 'Arcade'
         while True:
-
             arcade.getEvents()
             arcade.drawBackground(bg)
-            arcade.draw((text1, 50, 50))
-            mouse = arcade.getMousePos()
-            mouseClicked = arcade.getMouseButton()
-            if mouse[0] > 100 and mouse[1] > 100 and mouse[0] < 500 and mouse[1] < 500 and mouseClicked[0] == True:
-                #import_module('Test Game').Game(arcade)
-                import_module('Air Hockey').air_hockey(arcade)
-
+            arcade.draw((text1, 177, 10))
+            for i in range(len(selections)):
+                selections_rects[i][0], selections_rects[i][1] = 563 - selections[i].get_rect().width//2, 70*(i+2)
+                arcade.draw((selections[i], selections_rects[i][0], selections_rects[i][1]))
+            arcade.update()
+            pressed = arcade.getKey()
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_click = pygame.mouse.get_pressed()[0]
+            if pressed[K_1] or pressed[K_KP1] or (mouse_click and selections_rects[0].collidepoint(mouse_pos)): game = 'Air Hockey'; import_module('Air Hockey').air_hockey(arcade)
+            if pressed[K_2] or pressed[K_KP2] or (mouse_click and selections_rects[1].collidepoint(mouse_pos)): game = 'Block Breaker'; import_module('Block Breaker').Game(arcade)
+            if pressed[K_3] or pressed[K_KP3] or (mouse_click and selections_rects[2].collidepoint(mouse_pos)): game = 'Snow Whirled'; import_module('Snow Whirled').SnowWhirled(arcade)
+            if pressed[K_4] or pressed[K_KP4] or (mouse_click and selections_rects[3].collidepoint(mouse_pos)): game = 'Pong'; import_module('Pong').Game(arcade)
+            if pressed[K_5] or pressed[K_KP5] or (mouse_click and selections_rects[4].collidepoint(mouse_pos)): game = 'Colourful Balls'; import_module('Colourful Balls').game(arcade)
+            if pressed[K_ESCAPE]:
+                pygame.quit()
+                sys.exit()
     #Framework
     def getEvents(self): # You NEED this to be called in your main loop
         for event in pygame.event.get():
@@ -87,8 +105,8 @@ class arcade:
         for arg in args:
             self.screen.blit(arg[0],(arg[1],arg[2]))
             area = pygame.Surface.get_bounding_rect(arg[0])
-            area[0], area[1] = arg[1] - 10, arg[2] - 10
-            area[2], area[3] = area[2] + 20, area[3] + 20
+            area[0], area[1] = arg[1] - 20, arg[2] - 20
+            area[2], area[3] = area[2] + 40, area[3] + 40
             update_areas.append(area)
         act_rects.append(update_areas[:])
         act_rects.append(previous_areas[:])
@@ -112,6 +130,9 @@ class arcade:
         pygame.mouse.set_visible(True)
         self.setWindow(600,600)
         self.UI()
+        
+    def get_screen(self):
+        return self.screen
 
 
 
@@ -119,8 +140,8 @@ if __name__ == '__main__':
     #If arcade.py is executed, open game selector UI
     #All games are executable as a standalone game.
     #All games are contained in a single .py file + resources (sprites, fonts, etc.)
+    pygame.mixer.init(22050,-16,2,16)
     pygame.init()
-    pygame.mixer.init(22050,-16,2,1024)
     arcade.UI(arcade())
 
 
