@@ -167,7 +167,7 @@ def game(arcade):
             screen.blit(label2,(395,50))
             pressed = pygame.key.get_pressed()
             if pressed[K_RETURN]:
-                return
+                game(arcade)
         pygame.display.flip()
         if pressed[K_ESCAPE]:
             arcade.returnToArcade()
